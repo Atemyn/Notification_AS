@@ -54,7 +54,16 @@ public class MainActivity extends AppCompatActivity {
         // Создание намерения (???).
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntent =
+                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        }
+        else {
+            pendingIntent =
+                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
         // Создание конструктора уведомления, используя класс NotificationCompat, предназначенный
         //   для создания и поддержки уведомлений на старых и новых API.
         // Создание экземпляра конструктора уведомления.
@@ -88,8 +97,16 @@ public class MainActivity extends AppCompatActivity {
         // Отправка уведомления о возможности открыть сайт.
         Intent openWebIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://student.altstu.ru"));
         openWebIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent openWebPendingIntent =
-                PendingIntent.getActivity(this, 0, openWebIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        PendingIntent openWebPendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            openWebPendingIntent =
+                    PendingIntent.getActivity(this, 0, openWebIntent, PendingIntent.FLAG_IMMUTABLE);
+        }
+        else {
+            openWebPendingIntent =
+                    PendingIntent.getActivity(this, 0, openWebIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         NotificationCompat.Builder openWebBuilder =
                 new NotificationCompat.Builder(this, CHANNEL_ID);
@@ -108,4 +125,4 @@ public class MainActivity extends AppCompatActivity {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager2.notify(NOTIFY_ID_2, openWebBuilder.build());
     }
-};
+}
